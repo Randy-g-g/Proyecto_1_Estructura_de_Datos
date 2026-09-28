@@ -92,7 +92,7 @@ Servidor* ServidoresCluster::buscarServidorDeTarea(int idTarea) const {
     }
     Servidor* actual = primero;
     do {
-        if (actual->colaTareas->contiene(idTarea)) {
+        if (actual->colas->contiene(idTarea)) {
             return actual;
         }
         actual = actual->siguiente;
@@ -341,7 +341,7 @@ bool ServidoresCluster::encolarTarea(double memoriaGB, char prioridad, const str
 
     int idTarea = siguienteIdTarea;
     siguienteIdTarea++;
-    destino->colaTareas->encolar(idTarea, memoriaGB, prioridad, nombreLimpio);
+    destino->colas->encolar(idTarea, memoriaGB, prioridad, nombreLimpio);
 
     mensaje = "Tarea #" + numeroATexto(idTarea, 0) + " (" + nombreLimpio + ") asignada a ["
         + numeroATexto(destino->id, 0) + "] " + destino->nombre + " - "
@@ -358,24 +358,24 @@ bool ServidoresCluster::ejecutarTarea(int idServidor, string& mensaje) {
         mensaje = "No existe un servidor con el ID " + numeroATexto(idServidor, 0) + ".";
         return false;
     }
-    if (Servidor->colaTareas->estaVacia()) {
+    if (Servidor->colas->estaVacia()) {
         mensaje = "El servidor '" + Servidor->nombre + "' no tiene tareas pendientes para ejecutar.";
         return false;
     }
 
     cout << "\n ESTADO ANTES DE DESENCOLAR \n";
     Servidor->mostrarEncabezado();
-    Servidor->colaTareas->mostrar();
+    Servidor->colas->mostrar();
 
     Tarea ejecutada;
-    Servidor->colaTareas->desencolar(ejecutada);
+    Servidor->colas->desencolar(ejecutada);
 
     cout << "\n TAREA EJECUTADA \n";
     ejecutada.mostrarDetalle();
 
     cout << "\n ESTADO DESPUES DE DESENCOLAR \n";
     Servidor->mostrarEncabezado();
-    Servidor->colaTareas->mostrar();
+    Servidor->colas->mostrar();
 
     mensaje = "Tarea #" + numeroATexto(ejecutada.getId(), 0) + " ejecutada en '"
         + Servidor->nombre + "'. Tareas restantes: "
@@ -401,17 +401,17 @@ bool ServidoresCluster::eliminarTarea(int idTarea, string& mensaje) {
 
     cout << "\n COLA ANTES DE CANCELAR \n";
     servidor->mostrarEncabezado();
-    servidor->colaTareas->mostrar();
+    servidor->colas->mostrar();
 
     Tarea cancelada;
-    servidor->colaTareas->cancelar(idTarea, cancelada);
+    servidor->colas->cancelar(idTarea, cancelada);
 
     cout << "\n TAREA CANCELADA \n";
     cancelada.mostrarDetalle();
 
     cout << "\n COLA DESPUES DE CANCELAR \n";
     Servidor->mostrarEncabezado();
-    Servidor->colaTareas->mostrar();
+    Servidor->colas->mostrar();
 
     mensaje = "Tarea #" + numeroATexto(idTarea, 0) + " cancelada en '" + Servidor->nombre
         + "'. El orden FIFO de las tareas restantes se mantuvo.";
@@ -425,6 +425,6 @@ bool ServidoresCluster::mostrarCola(int idServidor) const {
     }
     cout << "\n COLA DE TAREAS \n";
     servidor->mostrarEncabezado();
-    servidor->colaTareas->mostrar();
+    servidor->colas->mostrar();
     return true;
 }

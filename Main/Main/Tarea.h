@@ -4,7 +4,7 @@
 #include <string>
 
 class Tarea {
-    friend class ColaTareas;// permite que ColaTareas acceda al enlace "siguiente" de Tarea
+    friend class Colas;// permite que Colas acceda al enlace "siguiente" de Tarea
 
 private:
     int id;
