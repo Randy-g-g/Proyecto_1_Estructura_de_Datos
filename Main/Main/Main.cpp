@@ -1,7 +1,7 @@
-using namespace std;
-#include <iostream>
+#include "Sistema.h"
 
-int main()
-{
-    cout << "Hello World!\n";
+int main() {
+	Sistema sistema;
+	sistema.iniciar();
+	return 0;
 }
