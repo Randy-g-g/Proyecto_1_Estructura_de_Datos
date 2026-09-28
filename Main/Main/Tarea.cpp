@@ -64,12 +64,11 @@ const {
 
 
 
-void Tarea::mostrarFila(int posicion)
-const {
-	cout << "   " << left
-		<< setw(6) << posicion
-		<< setw(8) << id
-		<< setw(32) << nombreProceso
-		<< right << setw(10) << fixed << setprecision(2) << memoriaGB << " GB   "
-		<< left << getPrioridadTexto() << "\n";
+void Tarea::mostrarFila(int posicion) const {
+	cout << "Posicion | ID | Proceso | Memoria | Prioridad" << endl;
+	cout << posicion << " | ";
+	cout << id << " | ";
+	cout << nombreProceso << " | ";
+	cout << memoriaGB << " GB | ";
+	cout << getPrioridadTexto() << endl;
 }
