@@ -57,7 +57,7 @@ int ServidoresCluster::getTotalTareasPendientes() const {
     } while (actual != primero);
     return total;
 }
-    //Recorrido circular termina al volver al primero
+    //busca un servidor recorriendo de forma circular, termina al volver al primero
 Servidor* ServidoresCluster::buscarPorId(int id) const {
     if (primero == NULL) {
         return NULL;
@@ -120,56 +120,52 @@ Servidor* ServidoresCluster::buscarMenosCarga (bool soloHighPerformance) const {
 
 //  MODULO 1: SERVIDORES
 
-// Registrar Servidor: valida ID en [1,8] y no repetido, IP unica, nombre y
-// arquitectura validos. Inserta en el anillo manteniendo el orden por ID.
+// registra un nuevo servidor 
 bool ServidoresCluster::registrarServidor(int id, const string& nombre, const string& ip,
-    int arquitectura, string& mensaje) {
+    int arquitectura, string& mensaje) { // string para msjs
     string nombreLimpio = Datos::recortar(nombre);
     string ipLimpia = Datos::recortar(ip);
     string motivo;
 
-    if (estaLleno()) {
+    if (estaLleno()) { //esta lleno 
         mensaje = "El cluster ya tiene los 8 servidores permitidos (IDs 1 a 8).";
         return false;
     }
-    if (id < idMin || id > idMax) {
+    if (id < idMin || id > idMax) { //rango 1-8
         mensaje = "El ID debe estar en el rango [1, 8].";
         return false;
     }
-    if (buscarPorId(id) != NULL) {
-        mensaje = "Ya existe un servidor con el ID " + numeroATexto(id, 0) + ".";
+    if (buscarPorId(id) != NULL) { //si tiene el mismo id
+        mensaje = "Ya existe un servidor con esta ID " + numeroATexto(id, 0) + ".";
         return false;
     }
     if (!Servidor::esIpv4Valida(ipLimpia, motivo)) {
         mensaje = motivo;
         return false;
     }
-    if (buscarPorIp(ipLimpia) != NULL) {
-        mensaje = "La IP '" + ipLimpia + "' ya pertenece a otro servidor.";
+    if (buscarPorIp(ipLimpia) != NULL) {//compara si la ip ya existe
+        mensaje = "La IP: '" + ipLimpia + "' ya existe.";
         return false;
     }
-    if (!Servidor::esNombreValido(nombreLimpio, motivo)) {
+    if (!Servidor::esNombreValido(nombreLimpio, motivo)) {//arquitectura 0.0.0.0, octetos
         mensaje = motivo;
         return false;
     }
-    if (!Servidor::esArquitecturaValida(arquitectura)) {
+    if (!Servidor::esArquitecturaValida(arquitectura)) {//valida si no cumple
         mensaje = "Tipo de arquitectura no valido.";
         return false;
     }
 
-    Servidor* nuevo = new Servidor(id, nombreLimpio, ipLimpia, (Arquitectura)arquitectura);
-
+    Servidor* nuevo = new Servidor(id, nombreLimpio, ipLimpia, (Arquitectura)arquitectura); //crea un puntero que apunta servidor guardado las variables del constructor
     if (primero == NULL) {
-        // Anillo vacio: el nodo se apunta a si mismo en ambas direcciones
         primero = nuevo;
         nuevo->siguiente = nuevo;
         nuevo->atras = nuevo;
     }
     else {
-        // Se busca el primer servidor con ID mayor; el nuevo va antes de el.
         // Si no existe, "actual" vuelve a "primero" y el nuevo queda al final.
         Servidor* actual = primero;
-        bool hayMayor = false;
+        bool hayMayor = false; //busca id del servidor, si es mayor (el nuevo esta antes de mayor)
         do {
             if (actual->id > id) {
                 hayMayor = true;
@@ -189,50 +185,37 @@ bool ServidoresCluster::registrarServidor(int id, const string& nombre, const st
         }
     }
     cantidad++;
-    mensaje = "Servidor [" + numeroATexto(id, 0) + "] " + nombreLimpio + " registrado correctamente.";
+    mensaje = "Servidor: " + numeroATexto(id, 0) + nombreLimpio + " registrado correctamente.";
     return true;
 }
 
-// Mostrar Estado del Cluster recorrido circular desde "primero" hasta volver a el
+// Muestra todos los servidores recorrido circular desde "primero" hasta volver a el
 void ServidoresCluster::mostrarEstado() const {
-    cout << "Estado del Clsuter";
+
+    cout << "\nEstado del Cluster\n";
+
     if (primero == NULL) {
-        cout << "   No hay servidores registrados en el cluster.\n";
-        cout << "   Registre al menos un servidor desde el menu de Servidores.\n";
+        cout << "No hay servidores registrados.\n";
         return;
     }
 
-    cout << "   " << left
-        << setw(5) << "ID"
-        << setw(20) << "Nombre"
-        << setw(20) << "Direccion IPv4"
-        << setw(19) << "Arquitectura"
-        << "Pendientes\n";
-    cout << "   " << string(72, '-') << "\n";
-
     Servidor* actual = primero;
+
     do {
-        cout << "   " << left
-            << setw(5) << actual->id
-            << setw(20) << actual->nombre.substr(0, 19)
-            << setw(20) << actual->ip.substr(0, 19)
-            << setw(19) << actual->getArquitecturaTexto()
-            << actual->getTareasPendientes() << "\n";
+        cout << "\nID: " << actual->id;
+        cout << "\nNombre: " << actual->nombre;
+        cout << "\nIP: " << actual->ip;
+        cout << "\nArquitectura: " << actual->getArquitecturaTexto();
+        cout << "\nTareas pendientes: " << actual->getTareasPendientes();
+        cout << "\n-------------------------\n";
+
         actual = actual->siguiente;
+
     } while (actual != primero);
 
-    cout << "   " << string(72, '-') << "\n";
-    cout << "   Servidores registrados: " << cantidad << " / " << idMax << "\n";
-    cout << "   Total de tareas pendientes en el cluster: " << getTotalTareasPendientes() << "\n";
-
-    // Evidencia del anillo se muestra el recorrido y el regreso al inicio
-    cout << "   Recorrido circular: ";
-    actual = primero;
-    do {
-        cout << "[" << actual->id << "] <-> ";
-        actual = actual->siguiente;
-    } while (actual != primero);
-    cout << "(regresa a [" << primero->id << "])\n";
+    cout << "\nServidores registrados: " << cantidad << endl;
+    cout << "Total de tareas pendientes: "
+        << getTotalTareasPendientes() << endl;
 }
 
 bool ServidoresCluster::registrarServidor(int id, const string& nuevoNombre, string& mensaje) {

@@ -4,6 +4,8 @@
 #include <string>
 #include "Servidor.h"
 
+using namespace std;
+
 class ServidoresCluster {
 private:
 	Servidor* primero;
@@ -27,20 +29,20 @@ public:
 	int getCantidad() const;
 	int getTotalTareasPendientes() const;
 	Servidor* buscarPorId(int id) const;
-	Servidor* buscarPorIp(const std::string& ip) const; //declaracion de metodo que busca sin distingir mayusculas
+	Servidor* buscarPorIp(const string& ip) const; //declaracion de metodo que busca sin distingir mayusculas
 	Servidor* buscarServidorDeTarea(int idTarea) const;
 
 	//Primer Modulo 1 Servidores
-	bool registrarServidor(int id, const std::string& nombre, const std::string& ip, int arquitectura, std::string& mensaje);
-	void mostrarEstado();
-	bool actualizarNombre(int id, const std::string& nuevoNombre, std::string& mensaje);
-	bool actualizarArquitectura(int id, int nuevaArquitectura, std::string& mensaje);
-	bool eliminarServidor(int id, std::string& mensaje);
+	bool registrarServidor(int id, const string& nombre, const string& ip, int arquitectura, string& mensaje);
+	void mostrarEstado() const;
+	bool actualizarNombre(int id, const string& nuevoNombre, string& mensaje);
+	bool actualizarArquitectura(int id, int nuevaArquitectura, string& mensaje);
+	bool eliminarServidor(int id, string& mensaje);
 
 	//Segundo Modulo 2: Tareas
-	bool encolarTarea(double memoriaGB, char prioridad, const std::string& nombreProceso, std::string& mensaje);
-	bool ejecutarTarea(int idServidor, std::string& mensaje);
-	bool eliminarTarea(int idTarea, std::string& mensaje);
+	bool encolarTarea(double memoriaGB, char prioridad, const string& nombreProceso, string& mensaje);
+	bool ejecutarTarea(int idServidor, string& mensaje);
+	bool eliminarTarea(int idTarea, string& mensaje);
 	void mostrarCola(int idServidor) const;
 };
 
