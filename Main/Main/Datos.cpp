@@ -100,7 +100,7 @@ int Datos::leerEntero(const string& mensaje) {
 		if (esEnteroValido(linea, valor)) {
 			return valor;
 		}
-		cout << "    [ERROR] Debe ingresar un numero entero.\n"
+		cout << "    [ERROR] Debe ingresar un numero entero.\n";
 	}
 }
 

@@ -33,13 +33,6 @@ ServidoresCluster::ServidoresCluster() : primero(NULL), cantidad(0), siguienteId
 }
 
 //Consultas para facilitar preguntas en algunas funciones
-bool ServidoresCluster::estaVacio() const {
-    return primero == NULL;
-}
-
-bool ServidoresCluster::estaLleno() const {
-    return cantidad >= (idMax - idMin + 1);
-}
 
 int ServidoresCluster::getCantidad() const {
     return cantidad;
@@ -127,8 +120,8 @@ bool ServidoresCluster::registrarServidor(int id, const string& nombre, const st
     string ipLimpia = Datos::recortar(ip);
     string motivo;
 
-    if (estaLleno()) { //esta lleno 
-        mensaje = "El cluster ya tiene los 8 servidores permitidos (IDs 1 a 8).";
+    if (cantidad >= 8) {
+        mensaje = "El cluster ya tiene los 8 servidores permitidos.";
         return false;
     }
     if (id < idMin || id > idMax) { //rango 1-8

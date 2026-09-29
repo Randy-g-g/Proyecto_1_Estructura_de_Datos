@@ -165,7 +165,7 @@ int Sistema::pedirIdServidorExistente(const string& mensaje) {
 //  SERVIDORES (METODOS)
 void Sistema::registrarServidor() {
 	titulo("REGISTRAR SERVIDOR");
-	if (cluster.estaLleno()) {
+	if (cluster.getCantidad() >= ServidoresCluster::idMax) {
 		mostrarResultado(false, "El cluster ya tiene los 8 servidores permitidos (IDs 1 a 8).");
 		return;
 	}
@@ -229,7 +229,7 @@ void Sistema::registrarServidor() {
 
 void Sistema::modificarServidor() {
 	titulo("MODIFICAR INFORMACION DE SERVIDOR");
-	if (cluster.estaVacio()) {
+	if (cluster.getCantidad() == 0) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
 	}
@@ -281,7 +281,7 @@ void Sistema::modificarServidor() {
 
 void Sistema::darDeBajaServidor() {
 	titulo("DAR DE BAJA A SERVIDOR");
-	if (cluster.estaVacio()) {
+	if (cluster.getCantidad() == 0) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
 	}
@@ -311,7 +311,7 @@ void Sistema::darDeBajaServidor() {
 //  TAREAS (METODOS)
 void Sistema::encolarTarea() {
 	titulo("ENCOLAR TAREA (ASIGNAR PROCESO)");
-	if (cluster.estaVacio()) {
+	if (cluster.getCantidad() == 0) {
 		mostrarResultado(false, "No hay servidores registrados. Registre un servidor primero.");
 		return;
 	}
@@ -329,7 +329,7 @@ void Sistema::encolarTarea() {
 
 void Sistema::ejecutarTarea() {
 	titulo("DESENCOLAR TAREA (EJECUTAR PROCESO)");
-	if (cluster.estaVacio()) {
+	if (cluster.getCantidad() == 0) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
 	}
@@ -367,7 +367,7 @@ void Sistema::cancelarTarea() {
 
 void Sistema::verColaDeServidor() {
 	titulo("VER COLA DE TAREAS DE UN SERVIDOR");
-	if (cluster.estaVacio()) {
+	if (cluster.getCantidad() == 0) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
 	}
@@ -381,8 +381,8 @@ void Sistema::verColaDeServidor() {
 
 void Sistema::cargarDatosDemostracion() {
 	titulo("CARGAR DATOS DE DEMOSTRACION");
-	if (!cluster.estaVacio()) {
-		mostrarResultado(false, "Solo se pueden cargar con el cluster vacio (para no chocar IDs ni IPs).");
+	if (cluster.getCantidad() != 0) {
+		mostrarResultado(false, "Solo se pueden cargar con el cluster vacio.");
 		return;
 	}
 	string mensaje;
