@@ -14,7 +14,7 @@ public:
 	static bool esRealValido(const string& texto, double& valor);
 	static string leerLinea(const string& mesaje);
 	static int leerEntero(const string& mensaje);
-	static int leerEmteroEnRango(const string mensaje, int minimo, int maximo);
+	static int leerEnteroEnRango(const string mensaje, int minimo, int maximo);
 	static double leerRealPositivo(const string& mensaje, int longtudMaxia);
 	static string leerTextoNoValido(const string& mensaje, const string& opcionesValidas);
 	static void pausar();

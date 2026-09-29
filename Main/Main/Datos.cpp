@@ -104,7 +104,7 @@ int Datos::leerEntero(const string& mensaje) {
 	}
 }
 
-int Datos::leerEmteroEnRango(const string& mensaje, int minimo, int maximo) {
+int Datos::leerEnteroEnRango(const string& mensaje, int minimo, int maximo) {
 	while (true) {
 		int valor = leerEntero(mensaje);
 		if (valor >= minimo && valor <= maximo) {
@@ -118,8 +118,8 @@ int Datos::leerEmteroEnRango(const string& mensaje, int minimo, int maximo) {
 double Datos::leerRealPositivo(const string& mensaje) {
 	double valor = 0;
 	while (true) {
-		string linea = leerLinea(mensaje) {
-			if (!es RealValido(linea, valor)) {
+		string linea = leerLinea(mensaje); {
+			if (!esRealValido(linea, valor)) {
 				cout << "  [ERROR]Debe ingresar un numero real (emplo: 16 o 12.5).\n";
 			}
 			else if (valor <= 0) {
