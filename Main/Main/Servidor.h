@@ -11,7 +11,7 @@ enum Arquitectura {
 };
 
 class Servidor {
-    friend class ClusterServidores;
+    friend class ServidoresCluster;
 
 private:
     int id;

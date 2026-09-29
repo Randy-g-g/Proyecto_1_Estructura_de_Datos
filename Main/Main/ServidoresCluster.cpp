@@ -16,7 +16,7 @@ static string numeroATexto(double valor, int decimales) { //convierte numero a t
 ServidoresCluster::ServidoresCluster() : primero(NULL), cantidad(0), siguienteIdTarea(1) {
 }
 
-    ServidoresCluster::~ServidoresCluster() {
+ServidoresCluster::~ServidoresCluster() {
     if (primero == NULL) {
         return;
     }
@@ -26,16 +26,10 @@ ServidoresCluster::ServidoresCluster() : primero(NULL), cantidad(0), siguienteId
     while (actual != NULL) {
         Servidor* aux = actual;
         actual = actual->siguiente;
-        delete aux
+        delete aux;
     }
     primero = NULL;
     cantidad = 0;
-}
-
-//Consultas para facilitar preguntas en algunas funciones
-
-int ServidoresCluster::getCantidad() const {
-    return cantidad;
 }
 
 int ServidoresCluster::getTotalTareasPendientes() const {
@@ -50,13 +44,13 @@ int ServidoresCluster::getTotalTareasPendientes() const {
     } while (actual != primero);
     return total;
 }
-    //busca un servidor recorriendo de forma circular, termina al volver al primero
+//busca un servidor recorriendo de forma circular, termina al volver al primero
 Servidor* ServidoresCluster::buscarPorId(int id) const {
     if (primero == NULL) {
         return NULL;
     }
     Servidor* actual = primero;
-    do {                                
+    do {
         if (actual->id == id) {
             return actual;
         }
@@ -64,7 +58,7 @@ Servidor* ServidoresCluster::buscarPorId(int id) const {
     } while (actual != primero);
     return NULL;
 }
-    //Busca y compara las ip
+//Busca y compara las ip
 Servidor* ServidoresCluster::buscarPorIp(const string& ip) const {
     if (primero == NULL) {
         return NULL;
@@ -78,7 +72,7 @@ Servidor* ServidoresCluster::buscarPorIp(const string& ip) const {
     } while (actual != primero);
     return NULL;
 }
-    //Retorna el servidor donde se encuntra la tarea que se desea buscar
+//Retorna el servidor donde se encuntra la tarea que se desea buscar
 Servidor* ServidoresCluster::buscarServidorDeTarea(int idTarea) const {
     if (primero == NULL) {
         return NULL;
@@ -93,8 +87,8 @@ Servidor* ServidoresCluster::buscarServidorDeTarea(int idTarea) const {
     return NULL;
 }
 
-    //Recorre desde el inicio, busca el servidor con menos carga
-Servidor* ServidoresCluster::buscarMenosCarga (bool soloHighPerformance) const {
+//Recorre desde el inicio, busca el servidor con menos carga
+Servidor* ServidoresCluster::buscarMenosCarga(bool soloHighPerformance) const {
     if (primero == NULL) {
         return NULL;
     }
@@ -120,8 +114,8 @@ bool ServidoresCluster::registrarServidor(int id, const string& nombre, const st
     string ipLimpia = Datos::recortar(ip);
     string motivo;
 
-    if (cantidad >= 8) {
-        mensaje = "El cluster ya tiene los 8 servidores permitidos.";
+    if (cantidad >= (idMax - idMin + 1)) { //esta lleno 
+        mensaje = "El cluster ya tiene los 8 servidores permitidos (IDs 1 a 8).";
         return false;
     }
     if (id < idMin || id > idMax) { //rango 1-8
@@ -211,7 +205,7 @@ void ServidoresCluster::mostrarEstado() const {
         << getTotalTareasPendientes() << endl;
 }
 
-bool ServidoresCluster::registrarServidor(int id, const string& nuevoNombre, string& mensaje) {
+bool ServidoresCluster::actualizarNombre(int id, const string& nuevoNombre, string& mensaje) {
     Servidor* servidor = buscarPorId(id);
     if (servidor == NULL) {
         mensaje = "No existe un servidor con el ID " + numeroATexto(id, 0) + ".";
@@ -251,24 +245,24 @@ bool ServidoresCluster::actualizarArquitectura(int id, int nuevaArquitectura, st
 
 // Dar de Baja: no se permite si el servidor aun tiene tareas pendientes
 bool ServidoresCluster::eliminarServidor(int id, string& mensaje) {
-    Servidor* Servidor = buscarPorId(id);
-    if (Servidor == NULL) {
+    Servidor* servidor = buscarPorId(id);
+    if (servidor == NULL) {
         mensaje = "No existe un servidor con el ID " + numeroATexto(id, 0) + ".";
         return false;
     }
-    if (Servidor->getTareasPendientes() > 0) {
-        mensaje = "No se puede dar de baja a '" + Servidor->nombre + "': aun tiene "
-            + numeroATexto(Servidor->getTareasPendientes(), 0)
+    if (servidor->getTareasPendientes() > 0) {
+        mensaje = "No se puede dar de baja a '" + servidor->nombre + "': aun tiene "
+            + numeroATexto(servidor->getTareasPendientes(), 0)
             + " tarea(s) pendiente(s). Ejecutelas o cancelelas primero.";
         return false;
     }
 
-    if (Servidor->siguiente == Servidor) {
+    if (servidor->siguiente == servidor) {
         primero = NULL;                                 // era el unico servidor
     }
     else {
         servidor->atras->siguiente = servidor->siguiente;   // se "puentea" el nodo
-        Servidor->siguiente->atras = servidor->atras;
+        servidor->siguiente->atras = servidor->atras;
         if (servidor == primero) {
             primero = servidor->siguiente;
         }
@@ -279,10 +273,6 @@ bool ServidoresCluster::eliminarServidor(int id, string& mensaje) {
     mensaje = "Servidor [" + numeroATexto(id, 0) + "] " + nombre + " dado de baja correctamente.";
     return true;
 }
-
-// ===========================================================================
-//  MODULO 2: TAREAS
-// ===========================================================================
 
 // Encolar Tarea (Asignar Proceso):
 //  - Mas de 32 GB o prioridad Critica -> servidor High-Performance con menos tareas.
@@ -315,14 +305,14 @@ bool ServidoresCluster::encolarTarea(double memoriaGB, char prioridad, const str
     string motivo;
 
     if (referencia.requiereAltoRendimiento()) {
-        destino = buscarMenosCargado(true);
+        destino = buscarMenosCarga(true);
         if (destino != NULL) {
             motivo = (prioridad == 'C')
                 ? "tarea Critica -> High-Performance con menos tareas"
                 : "requiere mas de 32 GB -> High-Performance con menos tareas";
         }
         else {
-            destino = buscarMenosCargado(false);
+            destino = buscarMenosCarga(false);
             motivo = "ADVERTENCIA: no hay servidores High-Performance; "
                 "se asigno al servidor con menos tareas del cluster";
         }
@@ -334,45 +324,46 @@ bool ServidoresCluster::encolarTarea(double memoriaGB, char prioridad, const str
 
     int idTarea = siguienteIdTarea;
     siguienteIdTarea++;
-    destino->colas->encolar(idTarea, memoriaGB, prioridad, nombreLimpio);
+    destino->colas->enColar(idTarea, memoriaGB, prioridad, nombreLimpio);
 
-    mensaje = "Tarea #" + numeroATexto(idTarea, 0) + " (" + nombreLimpio + ") asignada a ["
-        + numeroATexto(destino->id, 0) + "] " + destino->nombre + " - "
-        + destino->getArquitecturaTexto() + ".\n   Criterio: " + motivo
-        + ".\n   Tareas en cola de ese servidor: "
-        + numeroATexto(destino->getTareasPendientes(), 0) + ".";
+    cout << "Tarea: " << idTarea << endl;
+    cout << "Proceso: " << nombreLimpio << endl;
+    cout << "Servidor asignado: " << destino->nombre << endl;
+    cout << "Motivo: " << motivo << endl;
+
+    mensaje = "Tarea asignada correctamente.";
     return true;
 }
 
 // Desencolar Tarea (Ejecutar Proceso): muestra el estado antes y despues
 bool ServidoresCluster::ejecutarTarea(int idServidor, string& mensaje) {
-    Servidor* Servidor = buscarPorId(idServidor);
-    if (Servidor == NULL) {
+    Servidor* servidor = buscarPorId(idServidor);
+    if (servidor == NULL) {
         mensaje = "No existe un servidor con el ID " + numeroATexto(idServidor, 0) + ".";
         return false;
     }
-    if (Servidor->colas->estaVacia()) {
-        mensaje = "El servidor '" + Servidor->nombre + "' no tiene tareas pendientes para ejecutar.";
+    if (servidor->colas->estaVacia()) {
+        mensaje = "El servidor '" + servidor->nombre + "' no tiene tareas pendientes para ejecutar.";
         return false;
     }
 
     cout << "\n ESTADO ANTES DE DESENCOLAR \n";
-    Servidor->mostrarEncabezado();
-    Servidor->colas->mostrar();
+    servidor->mostrarEncabezado();
+    servidor->colas->mostrar();
 
     Tarea ejecutada;
-    Servidor->colas->desencolar(ejecutada);
+    servidor->colas->desenColar(ejecutada);
 
     cout << "\n TAREA EJECUTADA \n";
     ejecutada.mostrarDetalle();
 
     cout << "\n ESTADO DESPUES DE DESENCOLAR \n";
-    Servidor->mostrarEncabezado();
-    Servidor->colas->mostrar();
+    servidor->mostrarEncabezado();
+    servidor->colas->mostrar();
 
     mensaje = "Tarea #" + numeroATexto(ejecutada.getId(), 0) + " ejecutada en '"
-        + Servidor->nombre + "'. Tareas restantes: "
-        + numeroATexto(Servidor->getTareasPendientes(), 0) + ".";
+        + servidor->nombre + "'. Tareas restantes: "
+        + numeroATexto(servidor->getTareasPendientes(), 0) + ".";
     return true;
 }
 
@@ -396,17 +387,13 @@ bool ServidoresCluster::eliminarTarea(int idTarea, string& mensaje) {
     servidor->mostrarEncabezado();
     servidor->colas->mostrar();
 
-    Tarea cancelada;
-    servidor->colas->cancelar(idTarea, cancelada);
-
-    cout << "\n TAREA CANCELADA \n";
-    cancelada.mostrarDetalle();
+    servidor->colas->cancelar(idTarea);
 
     cout << "\n COLA DESPUES DE CANCELAR \n";
-    Servidor->mostrarEncabezado();
-    Servidor->colas->mostrar();
+    servidor->mostrarEncabezado();
+    servidor->colas->mostrar();
 
-    mensaje = "Tarea #" + numeroATexto(idTarea, 0) + " cancelada en '" + Servidor->nombre
+    mensaje = "Tarea #" + numeroATexto(idTarea, 0) + " cancelada en '" + servidor->nombre
         + "'. El orden FIFO de las tareas restantes se mantuvo.";
     return true;
 }

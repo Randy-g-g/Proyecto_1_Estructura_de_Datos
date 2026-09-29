@@ -2,14 +2,12 @@
 #include "Datos.h"
 #include <iostream>
 
-
-
 using namespace std;
 
 
 
 void Sistema::titulo(const string& texto) {
-	cout << "   " << texto ;
+	cout << "   " << texto;
 }
 
 
@@ -19,7 +17,7 @@ void Sistema::iniciar() {
 	int opcion = -1;
 	do {
 		titulo("CLOUDCLUSTER - Gestion de Cluster de Servidores y Tareas");
-		cout << "   Servidores: " << cluster.getCantidad() << "/" << ServidoresCluster::idMax
+		cout << "   Servidores: " << cluster.cantidad << "/" << ServidoresCluster::idMax
 			<< "   |   Tareas pendientes: " << cluster.getTotalTareasPendientes() << "\n\n";
 		cout << "   1. Modulo de Servidores (Lista Doble Circular)\n";
 		cout << "   2. Modulo de Tareas y Procesos (Cola FIFO)\n";
@@ -62,8 +60,7 @@ void Sistema::menuServidores() {
 		cout << "\n| 4. Dar de baja a servidor";
 		cout << "\n| 0. Volver al menu principal";
 		cout << "\n|------------------|------------------|";
-		cout << "\n\n Escoja una Opcion: ";
-		cin >> opcion_menu;
+		opcion_menu = Datos::leerEntero("\n\n Escoja una Opcion: ");
 
 		switch (opcion_menu) {
 		case 1:
@@ -103,8 +100,7 @@ void Sistema::menuTareas() {
 		cout << "\n| 4. Ver cola de tareas de un servidor";
 		cout << "\n| 0. Volver al menu principal";
 		cout << "\n|------------------|------------------|";
-		cout << "\n\n Escoja una Opcion: ";
-		cin >> opcion_menu;
+		opcion_menu = Datos::leerEntero("\n\n Escoja una Opcion: ");
 
 		switch (opcion_menu) {
 		case 1:
@@ -165,7 +161,7 @@ int Sistema::pedirIdServidorExistente(const string& mensaje) {
 //  SERVIDORES (METODOS)
 void Sistema::registrarServidor() {
 	titulo("REGISTRAR SERVIDOR");
-	if (cluster.getCantidad() >= ServidoresCluster::idMax) {
+	if (cluster.cantidad >= (ServidoresCluster::idMax - ServidoresCluster::idMin + 1)) {
 		mostrarResultado(false, "El cluster ya tiene los 8 servidores permitidos (IDs 1 a 8).");
 		return;
 	}
@@ -229,7 +225,7 @@ void Sistema::registrarServidor() {
 
 void Sistema::modificarServidor() {
 	titulo("MODIFICAR INFORMACION DE SERVIDOR");
-	if (cluster.getCantidad() == 0) {
+	if (cluster.primero == NULL) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
 	}
@@ -262,7 +258,7 @@ void Sistema::modificarServidor() {
 			string nombre = Datos::recortar(Datos::leerLinea("   Nuevo nombre: "));
 			string motivo;
 			if (Servidor::esNombreValido(nombre, motivo)) {
-				bool exito = cluster.modificarNombre(id, nombre, mensaje);
+				bool exito = cluster.actualizarNombre(id, nombre, mensaje);
 				mostrarResultado(exito, mensaje);
 				break;
 			}
@@ -272,7 +268,7 @@ void Sistema::modificarServidor() {
 	if (opcion == 2 || opcion == 3) {
 		cout << "\n   Arquitectura actual: " << servidor->getArquitecturaTexto() << "\n";
 		int arquitectura = pedirArquitectura();
-		bool exito = cluster.modificarArquitectura(id, arquitectura, mensaje);
+		bool exito = cluster.actualizarArquitectura(id, arquitectura, mensaje);
 		mostrarResultado(exito, mensaje);
 	}
 }
@@ -281,7 +277,7 @@ void Sistema::modificarServidor() {
 
 void Sistema::darDeBajaServidor() {
 	titulo("DAR DE BAJA A SERVIDOR");
-	if (cluster.getCantidad() == 0) {
+	if (cluster.primero == NULL) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
 	}
@@ -311,7 +307,7 @@ void Sistema::darDeBajaServidor() {
 //  TAREAS (METODOS)
 void Sistema::encolarTarea() {
 	titulo("ENCOLAR TAREA (ASIGNAR PROCESO)");
-	if (cluster.getCantidad() == 0) {
+	if (cluster.primero == NULL) {
 		mostrarResultado(false, "No hay servidores registrados. Registre un servidor primero.");
 		return;
 	}
@@ -329,7 +325,7 @@ void Sistema::encolarTarea() {
 
 void Sistema::ejecutarTarea() {
 	titulo("DESENCOLAR TAREA (EJECUTAR PROCESO)");
-	if (cluster.getCantidad() == 0) {
+	if (cluster.primero == NULL) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
 	}
@@ -361,13 +357,13 @@ void Sistema::cancelarTarea() {
 		return;
 	}
 	string mensaje;
-	bool exito = cluster.cancelarTarea(idTarea, mensaje);
+	bool exito = cluster.eliminarTarea(idTarea, mensaje);
 	mostrarResultado(exito, mensaje);
 }
 
 void Sistema::verColaDeServidor() {
 	titulo("VER COLA DE TAREAS DE UN SERVIDOR");
-	if (cluster.getCantidad() == 0) {
+	if (cluster.primero == NULL) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
 	}
@@ -376,13 +372,13 @@ void Sistema::verColaDeServidor() {
 	if (id == 0) {
 		return;
 	}
-	cluster.mostrarColaDeServidor(id);
+	cluster.mostrarCola(id);
 }
 
 void Sistema::cargarDatosDemostracion() {
 	titulo("CARGAR DATOS DE DEMOSTRACION");
-	if (cluster.getCantidad() != 0) {
-		mostrarResultado(false, "Solo se pueden cargar con el cluster vacio.");
+	if (cluster.primero != NULL) {
+		mostrarResultado(false, "Solo se pueden cargar con el cluster vacio (para no chocar IDs ni IPs).");
 		return;
 	}
 	string mensaje;

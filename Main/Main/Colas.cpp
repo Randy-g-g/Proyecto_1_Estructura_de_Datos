@@ -20,7 +20,7 @@ Colas::~Colas() {
 }
 
 // Agregar una tarea a la cola
-void Colas::encolar(int id, double memoriaGB, char prioridad, const string& nombreProceso) {
+void Colas::enColar(int id, double memoriaGB, char prioridad, const string& nombreProceso) {
 
     Tarea* nuevo = new Tarea(id, memoriaGB, prioridad, nombreProceso);
 
@@ -37,7 +37,7 @@ void Colas::encolar(int id, double memoriaGB, char prioridad, const string& nomb
 }
 
 // Sacar la primera tarea
-bool Colas::desencolar(Tarea& tareaEjecutada) {
+bool Colas::desenColar(Tarea& tareaEjecutada) {
 
     if (frente == NULL) {
         return false;
@@ -121,11 +121,6 @@ bool Colas::contiene(int idTarea) const {
 // Saber si la cola esta vacia
 bool Colas::estaVacia() const {
     return frente == NULL;
-}
-
-// Obtener cantidad de tareas
-int Colas::getCantidad() const {
-    return cantidad;
 }
 
 // Mostrar las tareas
