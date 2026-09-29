@@ -54,8 +54,8 @@ bool Tarea::esPrioridadValida(char valor) {
 
 
 
-void Tarea::mostrarDetalle()
-const {
+void Tarea::mostrarDetalle() const {
+	cout << "Detalles de la tarea.\n";
 	cout << "   ID de Tarea       : " << id << "\n";
 	cout << "   Nombre del Proceso: " << nombreProceso << "\n";
 	cout << "   Consumo de Memoria: " << fixed << setprecision(2) << memoriaGB << " GB\n";
