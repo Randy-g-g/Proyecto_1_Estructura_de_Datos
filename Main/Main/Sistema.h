@@ -2,11 +2,11 @@
 #define SISTEMA_H
 
 #include <string>
-#include "ClusterServidores.h"
+#include "ServidoresCluster.h"
 
 class Sistema {
 private:
-    ClusterServidores cluster;
+    ServidoresCluster cluster;
 
     // Menus
     void menuServidores();
