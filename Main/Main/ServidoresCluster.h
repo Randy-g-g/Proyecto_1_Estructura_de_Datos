@@ -24,8 +24,6 @@ public:
 	ServidoresCluster();
 	~ServidoresCluster();  //destructor para liberar espacio en memoria
 
-	bool estaVacio() const;
-	bool estaLleno() const;
 	int getCantidad() const;
 	int getTotalTareasPendientes() const;
 	Servidor* buscarPorId(int id) const;
