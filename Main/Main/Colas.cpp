@@ -1,129 +1,151 @@
 #include "Colas.h"
 #include <iostream>
-#include <iomanip>
 
 using namespace std;
 
-Colas::Colas() : frente(NULL), final(NULL), cantidad(0) {
+// Constructor
+Colas::Colas() {
+    frente = NULL;
+    fin = NULL;
+    cantidad = 0;
 }
 
+// Destructor
 Colas::~Colas() {
-	while (!frente != NULL) {
-		Tarea* aux = frente
-			frente = frente->siguiente;
-		delete aux;
-	}
-	fin = NULL;
-	cantidad = 0;
+    while (frente != NULL) {
+        Tarea* aux = frente;
+        frente = frente->siguiente;
+        delete aux;
+    }
 }
 
-void Colas::encotrarNodo(Tarea* nodo) {
-	nodo->siguiente = NULL;
-	if (frente == NULL) {
-		frente = nodo;
-		fin = nodo;
-	}
-	else {
-		fin->siguiente = nodo;
-		fin = nodo;
-	}
-	cantidad++;
-}
-Tarea* Colas::desencolarNodo() {
-	if (frente == NULL) {
-		return NULL;
-	}
-	Tarea* aux = frente;
-	frente = frente->siguiente;
-	if (frente == NULL) {
-		fin = NULL;
-	}
-	cantidad--;
-	return aux;
+// Agregar una tarea a la cola
+void Colas::encolar(int id, double memoriaGB, char prioridad, const string& nombreProceso) {
+
+    Tarea* nuevo = new Tarea(id, memoriaGB, prioridad, nombreProceso);
+
+    if (frente == NULL) {
+        frente = nuevo;
+        fin = nuevo;
+    }
+    else {
+        fin->siguiente = nuevo;
+        fin = nuevo;
+    }
+
+    cantidad++;
 }
 
-void Cola::encolar(int id, double memoriaGB, char prioridad, const string& nombreProceso) {
-	Tarea* nodo = new Tarea(id, memoriaGB, prioridad, nombreProceso);
-	encolarNodo(nuevo);
+// Sacar la primera tarea
+bool Colas::desencolar(Tarea& tareaEjecutada) {
+
+    if (frente == NULL) {
+        return false;
+    }
+
+    Tarea* aux = frente;
+
+    tareaEjecutada = *aux;
+
+    frente = frente->siguiente;
+
+    if (frente == NULL) {
+        fin = NULL;
+    }
+
+    tareaEjecutada.siguiente = NULL;
+
+    delete aux;
+    cantidad--;
+
+    return true;
 }
 
-bool Cola::desencolar(Tarea& tareaEjecutada) {
-	Tarea* aux = desencolarNodo();
-	if (aux == NULL) {
-		return false;
-	}
-	tareaEjecutada = *aux;
-	tareaEjecutada.siguiente = NULL;
-	delete aux;
-	return true;
+// Cancelar una tarea buscando por ID
+bool Colas::cancelar(int idTarea) {
+
+    if (frente == NULL) {
+        return false;
+    }
+
+    Tarea* actual = frente;
+    Tarea* anterior = NULL;
+
+    while (actual != NULL) {
+
+        if (actual->id == idTarea) {
+
+            // Si es la primera tarea
+            if (anterior == NULL) {
+                frente = actual->siguiente;
+            }
+            else {
+                anterior->siguiente = actual->siguiente;
+            }
+
+            // Si es la ultima tarea
+            if (actual == fin) {
+                fin = anterior;
+            }
+
+            delete actual;
+            cantidad--;
+
+            return true;
+        }
+
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+
+    return false;
 }
 
-bool Cola::cancelar(int idTarea, Tarea& tareaCancelada) {
-	if (estaVacia()) {
-		return false;
+// Buscar si existe una tarea
+bool Colas::contiene(int idTarea) const {
 
-	}
-	Colas temporal;
-	bool entrado = false;
+    Tarea* aux = frente;
 
-	while (!estaVacia()) {
-		Tarea* nodo = desencolarNodo();
-		if (!encotrada && nodo->id == idTarea) {
-			tareaCancelada = *nodo;
-			tareaCancelada.siguiente = NULL;
-			delete nodo;
-			entrado = true;
-			break;
-		}
-		else {
-			temporal.encolarNodo(nodo);
-		}
-	}
+    while (aux != NULL) {
 
-	while (!temporal.estaVacia()) {
-		encolarNodo(temporal.desencolarNodo());
-	}
-	return encontrada;
+        if (aux->id == idTarea) {
+            return true;
+        }
+
+        aux = aux->siguiente;
+    }
+
+    return false;
 }
 
-bool Cola::contiene(int idTarea) const {
-	Tarea* aux = frente;
-	while (aux != NULL) {
-		if (aux->id == idTarea) {
-			return true;
-		}
-		aux = aux->siguiente;
-	}
-	return false;
+// Saber si la cola esta vacia
+bool Colas::estaVacia() const {
+    return frente == NULL;
 }
 
-bool Cola::estaVacia() const {
-	return frente == NULL;
+// Obtener cantidad de tareas
+int Colas::getCantidad() const {
+    return cantidad;
 }
 
-int Cola::getCantidad() const {
-	return cantidad;
-}
+// Mostrar las tareas
+void Colas::mostrar() const {
 
-void Cola::mostrar() const {
-	if (estaVacia()) {
-		cout << "La cola esta vacia.\n";
-		return;
-	}
-	cout << "   " << left
-		<< setw(6) << "Pos."
-		<< setw(8) << "ID"
-		<< setw(32) << "Proceso"
-		<< right << setw(13) << "Memoria" << "   "
-		<< left << "Prioridad" << "\n";
-	cout << "   " << string(76, '-') << "\n";
+    if (estaVacia()) {
+        cout << "La cola esta vacia." << endl;
+        return;
+    }
 
-	Tarea* aux = frente;
-	int posicion = 1;
-	while (aux != NULL) {
-		aux->mostrarFila(posicion);
-		aux = aux->siguiente;
-		posicion++;
-	}
-	cout << "   (Frente = posicion 1: es la proxima tarea en ejecutar)\n";
+    cout << "Pos | ID | Proceso | Memoria | Prioridad" << endl;
+
+    Tarea* aux = frente;
+    int posicion = 1;
+
+    while (aux != NULL) {
+
+        aux->mostrarFila(posicion);
+
+        aux = aux->siguiente;
+        posicion++;
+    }
 }
