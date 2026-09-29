@@ -2,6 +2,8 @@
 #define TAREA_H
 
 #include <string>
+using namespace std;
+
 
 class Tarea {
     friend class Colas;// permite que Colas acceda al enlace "siguiente" de Tarea
@@ -10,7 +12,7 @@ private:
     int id;
     double memoriaGB;
     char prioridad;
-    std::string nombreProceso;
+    string nombreProceso;
     Tarea* siguiente;
 
 public:
@@ -22,8 +24,8 @@ public:
     int getId() const;//obtiene el id de la tarea
     double getMemoriaGB() const;//obtiene la memoria de la tarea
     char getPrioridad() const;//obtiene la prioridad de la tarea
-    std::string getPrioridadTexto() const;//obtiene la prioridad de la tarea en texto
-    std::string getNombreProceso() const;//obtiene el nombre del proceso de la tarea
+    string getPrioridadTexto() const;//obtiene la prioridad de la tarea en texto
+    string getNombreProceso() const;//obtiene el nombre del proceso de la tarea
 
     bool requiereAltoRendimiento() const;//determina si la tarea requiere alto rendimiento
 
