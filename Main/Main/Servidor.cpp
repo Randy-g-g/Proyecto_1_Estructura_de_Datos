@@ -6,7 +6,7 @@ using namespace std;
 
 Servidor::Servidor(int idServidor, const string& nombreServidor, const string& ipServidor,
     Arquitectura tipoArquitectura)
-     :id(idServidor), nombre(nombreServidor), ip(ipServidor), arquitectura(tipoArquitectura),
+    : id(idServidor), nombre(nombreServidor), ip(ipServidor), arquitectura(tipoArquitectura),
     colas(new Colas()), siguiente(NULL), atras(NULL) {
 }
 
@@ -100,7 +100,16 @@ bool Servidor::esNombreValido(const string& texto, string& motivo) {
     }
     return true;
 }
-
+//voy por aqui______________________________________________________________________________________________________________________________________________
+// IP valida en formato estandar IPv4 (notacion decimal con puntos): A.B.C.D
+//   - Exactamente 4 octetos separados por 3 puntos.
+//   - Cada octeto: solo digitos, de 1 a 3 cifras, valor entre 0 y 255.
+//   - Sin ceros a la izquierda ("010" se rechaza; "0" si es valido), porque
+//     "10.0.0.1" y "10.0.0.01" serian la misma IP escrita de dos formas y
+//     eso permitiria burlar la validacion de IP unica.
+//   - Sin espacios, letras ni otros simbolos.
+// Ejemplos validos: 192.168.1.10, 10.0.0.1, 0.0.0.0, 255.255.255.255
+// Ejemplos invalidos: 256.1.1.1, 10.0.0, 10..0.1, 10.0.0.1., 192.168.01.1, abc
 bool Servidor::esIpv4Valida(const string& direccion, string& motivo) {
     const string& ip = direccion;
     if (ip.empty()) {

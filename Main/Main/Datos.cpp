@@ -19,19 +19,15 @@ string Datos::aMayusculas(const string& texto) {
 }
 bool Datos::esEnteroValido(const string& texto, int& valor) {
     string t = recortar(texto);
-    if (t.empty()) 
-        return false;
+    if (t.empty()) return false;
     size_t i = (t[0] == '+' || t[0] == '-') ? 1 : 0;
-    if (i == t.size()) 
-        return false;
+    if (i == t.size()) return false;
     long long n = 0;
     long long limite = (t[0] == '-') ? (long long)INT_MAX + 1 : INT_MAX;
     for (; i < t.size(); i++) {
-        if (!isdigit((unsigned char)t[i])) 
-            return false;
+        if (!isdigit((unsigned char)t[i])) return false;
         int digito = t[i] - '0';
-        if (n > (limite - digito) / 10) 
-            return false;
+        if (n > (limite - digito) / 10) return false;
         n = n * 10 + digito;
     }
     valor = (int)((t[0] == '-') ? -n : n);
@@ -64,14 +60,14 @@ int Datos::leerEnteroEnRango(const string& mensaje, int minimo, int maximo) {
     while (true) {
         int valor = leerEntero(mensaje);
         if (valor >= minimo && valor <= maximo) return valor;
-        cout << "El valor debe estar entre " << minimo << " y " << maximo << ".\n";
+        cout << "El valor debe estar entre " << minimo << " y " << maximo <<endl;
     }
 }
 double Datos::leerRealPositivo(const string& mensaje) {
     double valor;
     while (true) {
         if (esRealValido(leerLinea(mensaje), valor) && valor > 0) return valor;
-        cout << "Ingrese un numero mayor que 0.\n";
+        cout <<"Ingrese un numero mayor que 0.\n";
     }
 }
 string Datos::leerTextoNoVacio(const string& mensaje, int longitudMaxima) {
@@ -85,7 +81,7 @@ char Datos::leerCaracterValido(const string& mensaje, const string& opcionesVali
     while (true) {
         string texto = aMayusculas(recortar(leerLinea(mensaje)));
         if (texto.size() == 1 && opcionesValidas.find(texto[0]) != string::npos) return texto[0];
-        cout << "Opciones validas: " << opcionesValidas <<endl;
+        cout << "Opciones validas: " << opcionesValidas << ".\n";
     }
 }
 void Datos::pausar() { leerLinea("\n Presione ENTER para continuar..."); }

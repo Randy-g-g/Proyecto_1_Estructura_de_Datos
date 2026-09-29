@@ -2,13 +2,12 @@
 #include "Datos.h"
 #include <iostream>
 
+
+
 using namespace std;
 
 
 
-void Sistema::titulo(const string& texto) {
-	cout << "   " << texto;
-}
 
 
 
@@ -16,15 +15,14 @@ void Sistema::titulo(const string& texto) {
 void Sistema::iniciar() {
 	int opcion = -1;
 	do {
-		titulo("CLOUDCLUSTER - Gestion de Cluster de Servidores y Tareas");
+		cout << "Gestion de Cluster de Servidores y Tareas" << endl;
 		cout << "   Servidores: " << cluster.cantidad << "/" << ServidoresCluster::idMax
 			<< "   |   Tareas pendientes: " << cluster.getTotalTareasPendientes() << "\n\n";
 		cout << "   1. Modulo de Servidores (Lista Doble Circular)\n";
 		cout << "   2. Modulo de Tareas y Procesos (Cola FIFO)\n";
 		cout << "   3. Mostrar estado del cluster\n";
-		cout << "   4. Cargar datos de demostracion\n";
 		cout << "   0. Salir\n";
-		opcion = Datos::leerEnteroEnRango("\n   Escoja una opcion: ", 0, 4);
+		opcion = Datos::leerEnteroEnRango("\n   Escoja una opcion: ", 0, 3);
 
 		switch (opcion) {
 		case 1:
@@ -35,10 +33,6 @@ void Sistema::iniciar() {
 			break;
 		case 3:
 			cluster.mostrarEstado();
-			Datos::pausar();
-			break;
-		case 4:
-			cargarDatosDemostracion();
 			Datos::pausar();
 			break;
 		case 0:
@@ -54,12 +48,11 @@ void Sistema::iniciar() {
 void Sistema::menuServidores() {
 	int opcion_menu = 0;
 	do {
-		cout << "\n| 1. Registrar servidor";
-		cout << "\n| 2. Mostrar estado del cluster";
-		cout << "\n| 3. Modificar informacion de servidor";
-		cout << "\n| 4. Dar de baja a servidor";
-		cout << "\n| 0. Volver al menu principal";
-		cout << "\n|------------------|------------------|";
+		cout << "\n 1. Registrar servidor";
+		cout << "\n 2. Mostrar estado del cluster";
+		cout << "\n 3. Modificar informacion de servidor";
+		cout << "\n 4. Dar de baja a servidor";
+		cout << "\n 0. Volver al menu principal";
 		opcion_menu = Datos::leerEntero("\n\n Escoja una Opcion: ");
 
 		switch (opcion_menu) {
@@ -94,12 +87,11 @@ void Sistema::menuServidores() {
 void Sistema::menuTareas() {
 	int opcion_menu = 0;
 	do {
-		cout << "\n| 1. Encolar tarea (Asignar proceso)";
-		cout << "\n| 2. Desencolar tarea (Ejecutar proceso)";
-		cout << "\n| 3. Cancelar tarea (Eliminar por ID)";
-		cout << "\n| 4. Ver cola de tareas de un servidor";
-		cout << "\n| 0. Volver al menu principal";
-		cout << "\n|------------------|------------------|";
+		cout << "\n 1. Encolar tarea (Asignar proceso)";
+		cout << "\n 2. Desencolar tarea (Ejecutar proceso)";
+		cout << "\n 3. Cancelar tarea (Eliminar por ID)";
+		cout << "\n 4. Ver cola de tareas de un servidor";
+		cout << "\n 0. Volver al menu principal";
 		opcion_menu = Datos::leerEntero("\n\n Escoja una Opcion: ");
 
 		switch (opcion_menu) {
@@ -132,7 +124,7 @@ void Sistema::menuTareas() {
 
 //  FUNCIONES AUXILIARES
 void Sistema::mostrarResultado(bool exito, const string& mensaje) {
-	cout << "\n " << (exito ? " [OK] " : "[Error] ") << mensaje << "\n";
+	cout << "\n " << (exito ? " valido " : "invalido ") << mensaje << "\n";
 }
 
 int Sistema::pedirArquitectura() {
@@ -152,7 +144,7 @@ int Sistema::pedirIdServidorExistente(const string& mensaje) {
 		if (cluster.buscarPorId(id) != NULL) {
 			return id;
 		}
-		cout << "   [Error] No existe un servidor con ese ID. (0 para cancelar)\n";
+		cout << "No existe un servidor con ese ID. (0 para cancelar)\n";
 	}
 }
 
@@ -160,7 +152,7 @@ int Sistema::pedirIdServidorExistente(const string& mensaje) {
 
 //  SERVIDORES (METODOS)
 void Sistema::registrarServidor() {
-	titulo("REGISTRAR SERVIDOR");
+	cout << "Registrar un servidor" << endl;
 	if (cluster.cantidad >= (ServidoresCluster::idMax - ServidoresCluster::idMin + 1)) {
 		mostrarResultado(false, "El cluster ya tiene los 8 servidores permitidos (IDs 1 a 8).");
 		return;
@@ -170,16 +162,16 @@ void Sistema::registrarServidor() {
 	// ID: rango y no repetido
 	int id = 0;
 	while (true) {
-		id = Datos::leerEntero("   ID del servidor [1-8]: ");
+		id = Datos::leerEntero("   ID del servidor (1-8): ");
 		if (id == 0) {
 			cout << "\n Registro cancelado.\n";
 			return;
 		}
 		if (id < ServidoresCluster::idMin || id > ServidoresCluster::idMax) {
-			cout << "   [Error] El ID debe estar en el rango [1, 8].\n";
+			cout << "El ID debe estar en el rango entre (1, 8).\n";
 		}
 		else if (cluster.buscarPorId(id) != NULL) {
-			cout << "   [Error] El ID " << id << " ya esta registrado. Use otro.\n";
+			cout << "El ID " << id << " ya esta registrado. Use otro.\n";
 		}
 		else {
 			break;
@@ -192,10 +184,10 @@ void Sistema::registrarServidor() {
 		ip = Datos::recortar(Datos::leerLinea("   Direccion IPv4 (ej. 192.168.1.10): "));
 		string motivo;
 		if (!Servidor::esIpv4Valida(ip, motivo)) {
-			cout << "   [Error] " << motivo << "\n";
+			cout << "Ip Invalida " << motivo << "\n";
 		}
 		else if (cluster.buscarPorIp(ip) != NULL) {
-			cout << "   [Error] Esa IP ya pertenece a otro servidor.\n";
+			cout << "Esa IP ya pertenece a otro servidor.\n";
 		}
 		else {
 			break;
@@ -210,7 +202,7 @@ void Sistema::registrarServidor() {
 		if (Servidor::esNombreValido(nombre, motivo)) {
 			break;
 		}
-		cout << "   [Error] " << motivo << "\n";
+		cout << "invalido " << motivo << "\n";
 	}
 
 	// Arquitectura
@@ -224,7 +216,7 @@ void Sistema::registrarServidor() {
 
 
 void Sistema::modificarServidor() {
-	titulo("MODIFICAR INFORMACION DE SERVIDOR");
+	cout << "Modificar servidor" << endl;
 	if (cluster.primero == NULL) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
@@ -262,7 +254,7 @@ void Sistema::modificarServidor() {
 				mostrarResultado(exito, mensaje);
 				break;
 			}
-			cout << "   [Error] " << motivo << "\n";
+			cout << "Nombre invalido" << motivo << "\n";
 		}
 	}
 	if (opcion == 2 || opcion == 3) {
@@ -276,7 +268,7 @@ void Sistema::modificarServidor() {
 
 
 void Sistema::darDeBajaServidor() {
-	titulo("DAR DE BAJA A SERVIDOR");
+	cout << "Dar de baja a un servidor" << endl;
 	if (cluster.primero == NULL) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
@@ -306,12 +298,12 @@ void Sistema::darDeBajaServidor() {
 
 //  TAREAS (METODOS)
 void Sistema::encolarTarea() {
-	titulo("ENCOLAR TAREA (ASIGNAR PROCESO)");
+	cout << "Encolar tarea y asignar" << endl;
 	if (cluster.primero == NULL) {
 		mostrarResultado(false, "No hay servidores registrados. Registre un servidor primero.");
 		return;
 	}
-	cout << "   Regla: > 32 GB o Critica -> High-Performance con menos tareas;\n";
+	cout << " Regla > 32 GB o Critica -> High-Performance con menos tareas;\n";
 	cout << "          Normal             -> servidor con menos tareas.\n\n";
 
 	string nombre = Datos::leerTextoNoVacio("   Nombre del proceso: ", 40);
@@ -324,7 +316,7 @@ void Sistema::encolarTarea() {
 }
 
 void Sistema::ejecutarTarea() {
-	titulo("DESENCOLAR TAREA (EJECUTAR PROCESO)");
+	cout << "Desencola tarea y ejecutar" << endl;
 	if (cluster.primero == NULL) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
@@ -346,7 +338,7 @@ void Sistema::ejecutarTarea() {
 }
 
 void Sistema::cancelarTarea() {
-	titulo("CANCELAR TAREA (ELIMINAR POR ID)");
+	cout << "Cancelar tarea (ELIMINAR POR ID)" << endl;
 	if (cluster.getTotalTareasPendientes() == 0) {
 		mostrarResultado(false, "No hay tareas pendientes para cancelar.");
 		return;
@@ -362,7 +354,7 @@ void Sistema::cancelarTarea() {
 }
 
 void Sistema::verColaDeServidor() {
-	titulo("VER COLA DE TAREAS DE UN SERVIDOR");
+	cout << "Ver la cola de tareas de un servidor" << endl;
 	if (cluster.primero == NULL) {
 		mostrarResultado(false, "No hay servidores registrados.");
 		return;
@@ -373,34 +365,4 @@ void Sistema::verColaDeServidor() {
 		return;
 	}
 	cluster.mostrarCola(id);
-}
-
-void Sistema::cargarDatosDemostracion() {
-	titulo("CARGAR DATOS DE DEMOSTRACION");
-	if (cluster.primero != NULL) {
-		mostrarResultado(false, "Solo se pueden cargar con el cluster vacio (para no chocar IDs ni IPs).");
-		return;
-	}
-	string mensaje;
-	cluster.registrarServidor(1, "Node-Alpha", "10.0.0.1", HIGH_PERFORMANCE, mensaje);
-	cout << "   " << mensaje << "\n";
-	cluster.registrarServidor(2, "Node-Beta", "10.0.0.2", STANDARD, mensaje);
-	cout << "   " << mensaje << "\n";
-	cluster.registrarServidor(3, "Node-Gamma", "10.0.0.3", MEMORY_OPTIMIZED, mensaje);
-	cout << "   " << mensaje << "\n";
-	cluster.registrarServidor(4, "Node-Delta", "10.0.0.4", HIGH_PERFORMANCE, mensaje);
-	cout << "   " << mensaje << "\n\n";
-
-	cluster.encolarTarea(8, 'N', "Backup base de datos", mensaje);
-	cout << "   " << mensaje << "\n";
-	cluster.encolarTarea(64, 'N', "Entrenamiento modelo IA", mensaje);
-	cout << "   " << mensaje << "\n";
-	cluster.encolarTarea(4, 'C', "Parche de seguridad", mensaje);
-	cout << "   " << mensaje << "\n";
-	cluster.encolarTarea(2.5, 'N', "Rotacion de logs", mensaje);
-	cout << "   " << mensaje << "\n";
-	cluster.encolarTarea(16, 'N', "Reporte de ventas", mensaje);
-	cout << "   " << mensaje << "\n";
-
-	mostrarResultado(true, "Datos de demostracion cargados.");
 }

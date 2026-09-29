@@ -274,6 +274,8 @@ bool ServidoresCluster::eliminarServidor(int id, string& mensaje) {
     return true;
 }
 
+
+
 // Encolar Tarea (Asignar Proceso):
 //  - Mas de 32 GB o prioridad Critica -> servidor High-Performance con menos tareas.
 //    Si no hay ningun High-Performance registrado, se asigna al servidor con
@@ -326,12 +328,11 @@ bool ServidoresCluster::encolarTarea(double memoriaGB, char prioridad, const str
     siguienteIdTarea++;
     destino->colas->enColar(idTarea, memoriaGB, prioridad, nombreLimpio);
 
-    cout << "Tarea: " << idTarea << endl;
-    cout << "Proceso: " << nombreLimpio << endl;
-    cout << "Servidor asignado: " << destino->nombre << endl;
-    cout << "Motivo: " << motivo << endl;
-
-    mensaje = "Tarea asignada correctamente.";
+    mensaje = "Tarea #" + numeroATexto(idTarea, 0) + " (" + nombreLimpio + ") asignada a ["
+        + numeroATexto(destino->id, 0) + "] " + destino->nombre + " - "
+        + destino->getArquitecturaTexto() + ".\n   Criterio: " + motivo
+        + ".\n   Tareas en cola de ese servidor: "
+        + numeroATexto(destino->getTareasPendientes(), 0) + ".";
     return true;
 }
 
