@@ -7,10 +7,11 @@
 using namespace std;
 
 class ServidoresCluster {
+	friend class Sistema;
 private:
 	Servidor* primero;
 	int cantidad;
-	int siguienteIpTarea;
+	int siguienteIdTarea;
 
 	Servidor* buscarMenosCarga(bool solohighPerformance) const;
 
@@ -24,7 +25,6 @@ public:
 	ServidoresCluster();
 	~ServidoresCluster();  //destructor para liberar espacio en memoria
 
-	int getCantidad() const;
 	int getTotalTareasPendientes() const;
 	Servidor* buscarPorId(int id) const;
 	Servidor* buscarPorIp(const string& ip) const; //declaracion de metodo que busca sin distingir mayusculas
@@ -41,7 +41,7 @@ public:
 	bool encolarTarea(double memoriaGB, char prioridad, const string& nombreProceso, string& mensaje);
 	bool ejecutarTarea(int idServidor, string& mensaje);
 	bool eliminarTarea(int idTarea, string& mensaje);
-	void mostrarCola(int idServidor) const;
+	bool mostrarCola(int idServidor) const;
 };
 
 #endif

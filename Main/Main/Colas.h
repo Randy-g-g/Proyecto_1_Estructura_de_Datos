@@ -5,25 +5,27 @@
 #include "Tarea.h"
 
 class Colas {
+    friend class Servidor;
 private:
     Tarea* frente;
     Tarea* fin;
     int cantidad;
 
 public:
+    Colas(const Colas&) = delete;
+    Colas& operator=(const Colas&) = delete;
     Colas();
     ~Colas();
 
-    void encolar(int id, double memoriaGB, char prioridad, const std::string& nombreProceso);
+    void enColar(int id, double memoriaGB, char prioridad, const std::string& nombreProceso);
 
-    bool desencolar(Tarea& tareaEjecutada);
+    bool desenColar(Tarea& tareaEjecutada);
 
     bool cancelar(int idTarea);
 
     bool contiene(int idTarea) const;
 
     bool estaVacia() const;
-    int getCantidad() const;
     void mostrar() const;
 };
 
