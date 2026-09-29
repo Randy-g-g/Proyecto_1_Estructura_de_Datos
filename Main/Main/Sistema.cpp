@@ -1,5 +1,5 @@
 #include "Sistema.h"
-#include "Entrada.h"
+#include "Datos.h"
 #include <iostream>
 
 
@@ -9,9 +9,7 @@ using namespace std;
 
 
 void Sistema::titulo(const string& texto) {
-	cout << "\n ==============================\n";
-	cout << "   " << texto << ;
-	cout << "\n ==============================\n";
+	cout << "   " << texto ;
 }
 
 
@@ -21,14 +19,14 @@ void Sistema::iniciar() {
 	int opcion = -1;
 	do {
 		titulo("CLOUDCLUSTER - Gestion de Cluster de Servidores y Tareas");
-		cout << "   Servidores: " << cluster.getCantidad() << "/" << ClusterServidores::ID_MAXIMO
+		cout << "   Servidores: " << cluster.getCantidad() << "/" << ServidoresCluster::idMax
 			<< "   |   Tareas pendientes: " << cluster.getTotalTareasPendientes() << "\n\n";
 		cout << "   1. Modulo de Servidores (Lista Doble Circular)\n";
 		cout << "   2. Modulo de Tareas y Procesos (Cola FIFO)\n";
 		cout << "   3. Mostrar estado del cluster\n";
 		cout << "   4. Cargar datos de demostracion\n";
 		cout << "   0. Salir\n";
-		opcion = Entrada::leerEnteroEnRango("\n   Escoja una opcion: ", 0, 4);
+		opcion = Datos::leerEnteroEnRango("\n   Escoja una opcion: ", 0, 4);
 
 		switch (opcion) {
 		case 1:
@@ -39,11 +37,11 @@ void Sistema::iniciar() {
 			break;
 		case 3:
 			cluster.mostrarEstado();
-			Entrada::pausar();
+			Datos::pausar();
 			break;
 		case 4:
 			cargarDatosDemostracion();
-			Entrada::pausar();
+			Datos::pausar();
 			break;
 		case 0:
 			cout << "\n Liberando memoria del cluster... Programa finalizado.\n";
@@ -70,19 +68,19 @@ void Sistema::menuServidores() {
 		switch (opcion_menu) {
 		case 1:
 			registrarServidor();
-			Entrada::pausar();
+			Datos::pausar();
 			break;
 		case 2:
 			cluster.mostrarEstado();
-			Entrada::pausar();
+			Datos::pausar();
 			break;
 		case 3:
 			modificarServidor();
-			Entrada::pausar();
+			Datos::pausar();
 			break;
 		case 4:
 			darDeBajaServidor();
-			Entrada::pausar();
+			Datos::pausar();
 			break;
 		case 0:
 			cout << "\n\n Regresando al menu principal...\n\n";
@@ -111,19 +109,19 @@ void Sistema::menuTareas() {
 		switch (opcion_menu) {
 		case 1:
 			encolarTarea();
-			Entrada::pausar();
+			Datos::pausar();
 			break;
 		case 2:
 			ejecutarTarea();
-			Entrada::pausar();
+			Datos::pausar();
 			break;
 		case 3:
 			cancelarTarea();
-			Entrada::pausar();
+			Datos::pausar();
 			break;
 		case 4:
 			verColaDeServidor();
-			Entrada::pausar();
+			Datos::pausar();
 			break;
 		case 0:
 			cout << "\n\n Regresando al menu principal...\n\n";
@@ -138,7 +136,7 @@ void Sistema::menuTareas() {
 
 //  FUNCIONES AUXILIARES
 void Sistema::mostrarResultado(bool exito, const string& mensaje) {
-	cout << "\n " << (exito ? "[OK] " : "[Error] ") << mensaje << "\n";
+	cout << "\n " << (exito ? " [OK] " : "[Error] ") << mensaje << "\n";
 }
 
 int Sistema::pedirArquitectura() {
@@ -146,12 +144,12 @@ int Sistema::pedirArquitectura() {
 	cout << "     1. High-Performance\n";
 	cout << "     2. Standard\n";
 	cout << "     3. Memory-Optimized\n";
-	return Entrada::leerEnteroEnRango("   Seleccione entre 1-3 : ", 1, 3);
+	return Datos::leerEnteroEnRango("   Seleccione entre 1-3 : ", 1, 3);
 }
 
 int Sistema::pedirIdServidorExistente(const string& mensaje) {
 	while (true) {
-		int id = Entrada::leerEntero(mensaje);
+		int id = Datos::leerEntero(mensaje);
 		if (id == 0) {
 			return 0;
 		}
@@ -176,12 +174,12 @@ void Sistema::registrarServidor() {
 	// ID: rango y no repetido
 	int id = 0;
 	while (true) {
-		id = Entrada::leerEntero("   ID del servidor [1-8]: ");
+		id = Datos::leerEntero("   ID del servidor [1-8]: ");
 		if (id == 0) {
 			cout << "\n Registro cancelado.\n";
 			return;
 		}
-		if (id < ClusterServidores::ID_MINIMO || id > ClusterServidores::ID_MAXIMO) {
+		if (id < ServidoresCluster::idMin || id > ServidoresCluster::idMax) {
 			cout << "   [Error] El ID debe estar en el rango [1, 8].\n";
 		}
 		else if (cluster.buscarPorId(id) != NULL) {
@@ -195,7 +193,7 @@ void Sistema::registrarServidor() {
 	// IP: formato IPv4
 	string ip;
 	while (true) {
-		ip = Entrada::recortar(Entrada::leerLinea("   Direccion IPv4 (ej. 192.168.1.10): "));
+		ip = Datos::recortar(Datos::leerLinea("   Direccion IPv4 (ej. 192.168.1.10): "));
 		string motivo;
 		if (!Servidor::esIpv4Valida(ip, motivo)) {
 			cout << "   [Error] " << motivo << "\n";
@@ -211,7 +209,7 @@ void Sistema::registrarServidor() {
 	// Nombre
 	string nombre;
 	while (true) {
-		nombre = Entrada::recortar(Entrada::leerLinea("   Nombre del servidor (ej. Node-Alpha): "));
+		nombre = Datos::recortar(Datos::leerLinea("   Nombre del servidor (ej. Node-Alpha): "));
 		string motivo;
 		if (Servidor::esNombreValido(nombre, motivo)) {
 			break;
@@ -252,7 +250,7 @@ void Sistema::modificarServidor() {
 	cout << "     2. Tipo de arquitectura\n";
 	cout << "     3. Ambos\n";
 	cout << "     0. Cancelar\n";
-	int opcion = Entrada::leerEnteroEnRango("   Opcion: ", 0, 3);
+	int opcion = Datos::leerEnteroEnRango("   Opcion: ", 0, 3);
 	if (opcion == 0) {
 		cout << "\n Modificacion cancelada.\n";
 		return;
@@ -261,7 +259,7 @@ void Sistema::modificarServidor() {
 	string mensaje;
 	if (opcion == 1 || opcion == 3) {
 		while (true) {
-			string nombre = Entrada::recortar(Entrada::leerLinea("   Nuevo nombre: "));
+			string nombre = Datos::recortar(Datos::leerLinea("   Nuevo nombre: "));
 			string motivo;
 			if (Servidor::esNombreValido(nombre, motivo)) {
 				bool exito = cluster.modificarNombre(id, nombre, mensaje);
@@ -296,7 +294,7 @@ void Sistema::darDeBajaServidor() {
 	}
 	Servidor* servidor = cluster.buscarPorId(id);
 	if (servidor->getTareasPendientes() == 0) {
-		char confirmacion = Entrada::leerCaracterValido(
+		char confirmacion = Datos::leerCaracterValido(
 			"   Confirma dar de baja a '" + servidor->getNombre() + "'? (S/N): ", "SN");
 		if (confirmacion == 'N') {
 			cout << "\n Operacion cancelada.\n";
@@ -320,9 +318,9 @@ void Sistema::encolarTarea() {
 	cout << "   Regla: > 32 GB o Critica -> High-Performance con menos tareas;\n";
 	cout << "          Normal             -> servidor con menos tareas.\n\n";
 
-	string nombre = Entrada::leerTextoNoVacio("   Nombre del proceso: ", 40);
-	double memoria = Entrada::leerRealPositivo("   Consumo de memoria (GB): ");
-	char prioridad = Entrada::leerCaracterValido("   Prioridad (N = Normal, C = Critica): ", "NC");
+	string nombre = Datos::leerTextoNoVacio("   Nombre del proceso: ", 40);
+	double memoria = Datos::leerRealPositivo("   Consumo de memoria (GB): ");
+	char prioridad = Datos::leerCaracterValido("   Prioridad (N = Normal, C = Critica): ", "NC");
 
 	string mensaje;
 	bool exito = cluster.encolarTarea(memoria, prioridad, nombre, mensaje);
@@ -357,7 +355,7 @@ void Sistema::cancelarTarea() {
 		mostrarResultado(false, "No hay tareas pendientes para cancelar.");
 		return;
 	}
-	int idTarea = Entrada::leerEntero("   ID de la tarea a cancelar (0 = cancelar): ");
+	int idTarea = Datos::leerEntero("   ID de la tarea a cancelar (0 = cancelar): ");
 	if (idTarea == 0) {
 		cout << "\n Operacion cancelada.\n";
 		return;
