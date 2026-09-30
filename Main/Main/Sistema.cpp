@@ -242,7 +242,6 @@ void Sistema::modificarServidor() {
 	cout << "     3. Ambos\n";
 	cout << "     0. Cancelar\n";
 	int opcion = Datos::leerEnteroEnRango("   Opcion: ", 0, 3);
-	system("cls");
 	if (opcion == 0) {
 		cout << "\n Modificacion cancelada.\n";
 		return;
