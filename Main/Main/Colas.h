@@ -7,8 +7,8 @@
 class Colas {
 	friend class Servidor;// Clase amiga para permitir el acceso a los miembros privados de Colas desde Servidor
 private:
-    Tarea* Inicio;
-    Tarea* final;
+    Tarea* colaInicio;
+    Tarea* colaFin;
     int cantidad;
 
 public:
