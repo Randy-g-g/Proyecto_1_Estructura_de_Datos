@@ -8,10 +8,10 @@ enum Arquitectura {
     HIGH_PERFORMANCE = 1,
     STANDARD = 2,
     MEMORY_OPTIMIZED = 3
-};
+}; //agregar enumeración para la arquitectura del servidor
 
 class Servidor {
-    friend class ServidoresCluster;
+	friend class ServidoresCluster;// Clase amiga para permitir el acceso a los miembros privados de Servidor desde ServidoresCluster
 
 private:
     int id;
@@ -23,7 +23,7 @@ private:
     Servidor* atras;
 
     Servidor(const Servidor&);
-    Servidor& operator=(const Servidor&);
+	Servidor& operator=(const Servidor&);// Eliminar el constructor de copia y el operador de asignación para evitar copias accidentales
 
 public:
     Servidor(int id, const std::string& nombre, const std::string& ip, Arquitectura arquitectura);

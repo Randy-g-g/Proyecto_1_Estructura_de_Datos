@@ -7,10 +7,10 @@
 using namespace std;
 
 
-static string numeroATexto(double valor, int decimales) { //convierte numero a texto, genuinamente nose como funciona
+static string numeroATexto(double valor, int decimales) { //genuinamente nose como funciona. Convierte un numero a string usando un flujo de salida (ostringstream) con la cantidad de decimales indicada.
     ostringstream salida;
-    salida << fixed << setprecision(decimales) << valor;
-    return salida.str();
+	salida << fixed << setprecision(decimales) << valor;// fija la cantidad de decimales y lo convierte a string
+	return salida.str();// devuelve la cadena resultante del flujo de salida
 }
 
 ServidoresCluster::ServidoresCluster() : primero(NULL), cantidad(0), siguienteIdTarea(1) {
@@ -21,7 +21,7 @@ ServidoresCluster::~ServidoresCluster() {
         return;
     }
     // lista doble enlazada circular cambia a doble enlazada para sacar un elemento e ir vaciando la lista 
-    primero->atras->siguiente = NULL;
+	primero->atras->siguiente = NULL;// rompe el enlace circular para poder recorrer la lista y eliminar los servidores
     Servidor* actual = primero;
     while (actual != NULL) {
         Servidor* aux = actual;
@@ -95,9 +95,9 @@ Servidor* ServidoresCluster::buscarMenosCarga(bool soloHighPerformance) const {
     Servidor* mejor = NULL;
     Servidor* actual = primero;
     do {
-        if (!soloHighPerformance || actual->arquitectura == HIGH_PERFORMANCE) { // si ambos servidores son iwales
+        if (!soloHighPerformance || actual->arquitectura == HIGH_PERFORMANCE) { 
             if (mejor == NULL || actual->getTareasPendientes() < mejor->getTareasPendientes()) {
-                mejor = actual; //devuevle el de menor id
+                mejor = actual; // Con "<" estricto, en empate se conserva el primero encontrado (el de menor ID, porque la lista esta ordenada)
             }
         }
         actual = actual->siguiente;
@@ -109,7 +109,7 @@ Servidor* ServidoresCluster::buscarMenosCarga(bool soloHighPerformance) const {
 
 // registra un nuevo servidor 
 bool ServidoresCluster::registrarServidor(int id, const string& nombre, const string& ip,
-    int arquitectura, string& mensaje) { // string para msjs
+	int arquitectura, string& mensaje) { //valida y registra un nuevo servidor en el cluster, si no se puede registrar devuelve false y un mensaje de error
     string nombreLimpio = Datos::recortar(nombre);
     string ipLimpia = Datos::recortar(ip);
     string motivo;
@@ -134,7 +134,7 @@ bool ServidoresCluster::registrarServidor(int id, const string& nombre, const st
         mensaje = "La IP: '" + ipLimpia + "' ya existe.";
         return false;
     }
-    if (!Servidor::esNombreValido(nombreLimpio, motivo)) {//arquitectura 0.0.0.0, octetos
+    if (!Servidor::esNombreValido(nombreLimpio, motivo)) {
         mensaje = motivo;
         return false;
     }
@@ -172,8 +172,7 @@ bool ServidoresCluster::registrarServidor(int id, const string& nombre, const st
         }
     }
     cantidad++;
-    mensaje = "Servidor: " + numeroATexto(id, 0) + nombreLimpio + " registrado correctamente.";
-    return true;
+    mensaje = "Servidor [" + numeroATexto(id, 0) + "] " + nombreLimpio + " registrado correctamente."; return true;
 }
 
 // Muestra todos los servidores recorrido circular desde "primero" hasta volver a el
@@ -277,10 +276,7 @@ bool ServidoresCluster::eliminarServidor(int id, string& mensaje) {
 
 
 // Encolar Tarea (Asignar Proceso):
-//  - Mas de 32 GB o prioridad Critica -> servidor High-Performance con menos tareas.
-//    Si no hay ningun High-Performance registrado, se asigna al servidor con
-//    menos tareas del cluster y se advierte al usuario (caso no definido en el enunciado).
-//  - Normal -> servidor con menos tareas del cluster.
+
 bool ServidoresCluster::encolarTarea(double memoriaGB, char prioridad, const string& nombreProceso,
     string& mensaje) {
     string nombreLimpio = Datos::recortar(nombreProceso);

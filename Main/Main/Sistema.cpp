@@ -254,7 +254,7 @@ void Sistema::modificarServidor() {
 				mostrarResultado(exito, mensaje);
 				break;
 			}
-			cout << "Nombre invalido" << motivo << "\n";
+			cout << "Nombre invalido " << motivo << "\n";
 		}
 	}
 	if (opcion == 2 || opcion == 3) {

@@ -10,8 +10,8 @@ class Tarea {
 
 private:
     int id;
-    double memoriaGB;
-    char prioridad;
+	double memoriaGB;//obtiene la memoria de la tarea
+    char prioridad;//obtiene la prioridad de la tarea
     string nombreProceso;
     Tarea* siguiente;
 
@@ -19,7 +19,7 @@ public:
     static const double LIMITE_MEMORIA_GB;   // 32 GB
 
     Tarea();
-    Tarea(int id, double memoriaGB, char prioridad, const std::string& nombreProceso);
+	Tarea(int id, double memoriaGB, char prioridad, const std::string& nombreProceso);// Constructor para inicializar una tarea con sus atributos
 
     int getId() const;//obtiene el id de la tarea
     double getMemoriaGB() const;//obtiene la memoria de la tarea

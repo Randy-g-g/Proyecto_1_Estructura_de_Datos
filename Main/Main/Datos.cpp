@@ -10,11 +10,11 @@ string Datos::recortar(const string& texto) {
     size_t inicio = 0, fin = texto.size();
     while (inicio < fin && isspace((unsigned char)texto[inicio])) inicio++;
     while (fin > inicio && isspace((unsigned char)texto[fin - 1])) fin--;
-    return texto.substr(inicio, fin - inicio);
+	return texto.substr(inicio, fin - inicio);// devuelve la subcadena desde inicio hasta fin - inicio
 }
 string Datos::aMayusculas(const string& texto) {
     string copia = texto;
-    for (size_t i = 0; i < copia.size(); i++) copia[i] = (char)toupper((unsigned char)copia[i]);
+	for (size_t i = 0; i < copia.size(); i++) copia[i] = (char)toupper((unsigned char)copia[i]);// convierte cada caracter a mayúscula
     return copia;
 }
 bool Datos::esEnteroValido(const string& texto, int& valor) {

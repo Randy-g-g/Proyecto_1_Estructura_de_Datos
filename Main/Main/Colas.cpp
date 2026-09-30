@@ -5,16 +5,16 @@ using namespace std;
 
 // Constructor
 Colas::Colas() {
-    frente = NULL;
-    fin = NULL;
+    Inicio = NULL;
+    final = NULL;
     cantidad = 0;
 }
 
 // Destructor
 Colas::~Colas() {
-    while (frente != NULL) {
-        Tarea* aux = frente;
-        frente = frente->siguiente;
+    while (Inicio != NULL) {
+        Tarea* aux = Inicio;
+        Inicio = Inicio->siguiente;
         delete aux;
     }
 }
@@ -24,13 +24,13 @@ void Colas::enColar(int id, double memoriaGB, char prioridad, const string& nomb
 
     Tarea* nuevo = new Tarea(id, memoriaGB, prioridad, nombreProceso);
 
-    if (frente == NULL) {
-        frente = nuevo;
-        fin = nuevo;
+    if (Inicio == NULL) {
+        Inicio = nuevo;
+        final = nuevo;
     }
     else {
-        fin->siguiente = nuevo;
-        fin = nuevo;
+        final->siguiente = nuevo;
+        final = nuevo;
     }
 
     cantidad++;
@@ -39,18 +39,18 @@ void Colas::enColar(int id, double memoriaGB, char prioridad, const string& nomb
 // Sacar la primera tarea
 bool Colas::desenColar(Tarea& tareaEjecutada) {
 
-    if (frente == NULL) {
+    if (Inicio == NULL) {
         return false;
     }
 
-    Tarea* aux = frente;
+    Tarea* aux = Inicio;
 
     tareaEjecutada = *aux;
 
-    frente = frente->siguiente;
+    Inicio = Inicio->siguiente;
 
-    if (frente == NULL) {
-        fin = NULL;
+    if (Inicio == NULL) {
+        final = NULL;
     }
 
     tareaEjecutada.siguiente = NULL;
@@ -64,47 +64,36 @@ bool Colas::desenColar(Tarea& tareaEjecutada) {
 // Cancelar una tarea buscando por ID
 bool Colas::cancelar(int idTarea) {
 
-    if (frente == NULL) {
+    if (Inicio == NULL) {
         return false;
     }
 
-    Tarea* actual = frente;
-    Tarea* anterior = NULL;
+    Colas temporal;
+    Tarea actual;
+    bool encontrada = false;
 
-    while (actual != NULL) {
-
-        if (actual->id == idTarea) {
-
-            // Si es la primera tarea
-            if (anterior == NULL) {
-                frente = actual->siguiente;
-            }
-            else {
-                anterior->siguiente = actual->siguiente;
-            }
-
-            // Si es la ultima tarea
-            if (actual == fin) {
-                fin = anterior;
-            }
-
-            delete actual;
-            cantidad--;
-
-            return true;
+    // 1. Desencolado temporal
+    while (desenColar(actual)) {
+        if (!encontrada && actual.id == idTarea) {
+            encontrada = true;          // esta tarea no se re-encola (se cancela)
         }
-
-        anterior = actual;
-        actual = actual->siguiente;
+        else {
+			temporal.enColar(actual.id, actual.memoriaGB, actual.prioridad, actual.nombreProceso);// re-encolado temporal
+            }
     }
 
-    return false;
+    // 2. Re-encolado de los elementos sobrantes en el mismo orden
+    while (temporal.desenColar(actual)) {       
+		enColar(actual.id, actual.memoriaGB, actual.prioridad, actual.nombreProceso);// re-encolado original
+    }
+
+	return encontrada;// devuelve true si se encontró y canceló la tarea, false si no se encontró
 }
 
 // Buscar si existe una tarea
 bool Colas::contiene(int idTarea) const {
 
-    Tarea* aux = frente;
+    Tarea* aux = Inicio;
 
     while (aux != NULL) {
 
@@ -120,7 +109,7 @@ bool Colas::contiene(int idTarea) const {
 
 // Saber si la cola esta vacia
 bool Colas::estaVacia() const {
-    return frente == NULL;
+    return Inicio == NULL;
 }
 
 // Mostrar las tareas
@@ -133,7 +122,7 @@ void Colas::mostrar() const {
 
     cout << "Pos | ID | Proceso | Memoria | Prioridad" << endl;
 
-    Tarea* aux = frente;
+    Tarea* aux = Inicio;
     int posicion = 1;
 
     while (aux != NULL) {

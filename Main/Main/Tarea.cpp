@@ -65,10 +65,9 @@ void Tarea::mostrarDetalle() const {
 
 
 void Tarea::mostrarFila(int posicion) const {
-	cout << "Posicion | ID | Proceso | Memoria | Prioridad" << endl;
 	cout << posicion << " | ";
 	cout << id << " | ";
 	cout << nombreProceso << " | ";
-	cout << memoriaGB << " GB | ";
+	cout << fixed << setprecision(2) << memoriaGB << " GB | ";
 	cout << getPrioridadTexto() << endl;
 }

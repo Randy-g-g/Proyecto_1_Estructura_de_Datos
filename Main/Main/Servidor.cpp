@@ -100,16 +100,7 @@ bool Servidor::esNombreValido(const string& texto, string& motivo) {
     }
     return true;
 }
-//voy por aqui______________________________________________________________________________________________________________________________________________
-// IP valida en formato estandar IPv4 (notacion decimal con puntos): A.B.C.D
-//   - Exactamente 4 octetos separados por 3 puntos.
-//   - Cada octeto: solo digitos, de 1 a 3 cifras, valor entre 0 y 255.
-//   - Sin ceros a la izquierda ("010" se rechaza; "0" si es valido), porque
-//     "10.0.0.1" y "10.0.0.01" serian la misma IP escrita de dos formas y
-//     eso permitiria burlar la validacion de IP unica.
-//   - Sin espacios, letras ni otros simbolos.
-// Ejemplos validos: 192.168.1.10, 10.0.0.1, 0.0.0.0, 255.255.255.255
-// Ejemplos invalidos: 256.1.1.1, 10.0.0, 10..0.1, 10.0.0.1., 192.168.01.1, abc
+ 
 bool Servidor::esIpv4Valida(const string& direccion, string& motivo) {
     const string& ip = direccion;
     if (ip.empty()) {
@@ -150,7 +141,7 @@ bool Servidor::esIpv4Valida(const string& direccion, string& motivo) {
         }
         octetos++;
 
-        // --- Despues de un octeto solo puede venir un punto o el final ---
+        // Despues de un octeto solo puede venir un punto o el final 
         if (i < ip.size()) {
             if (ip[i] != '.') {
                 motivo = "La IP solo puede contener digitos y puntos (ej. 192.168.1.10).";
@@ -160,7 +151,7 @@ bool Servidor::esIpv4Valida(const string& direccion, string& motivo) {
                 motivo = "La IP debe tener exactamente 4 octetos.";
                 return false;
             }
-            i++;                                        // salta el punto
+            i++;                                        
             if (i == ip.size()) {
                 motivo = "La IP no puede terminar en punto.";
                 return false;
@@ -173,3 +164,5 @@ bool Servidor::esIpv4Valida(const string& direccion, string& motivo) {
     }
     return true;
 }
+
+// Los octetos son los numeros separados por puntos en una direccion IPv4, cada octeto debe estar entre 0 y 255, y la direccion completa debe tener exactamente 4 octetos.

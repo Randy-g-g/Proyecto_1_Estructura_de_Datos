@@ -7,15 +7,15 @@
 using namespace std;
 
 class ServidoresCluster {
-	friend class Sistema;
+	friend class Sistema;// Clase amiga para permitir el acceso a los miembros privados de ServidoresCluster desde Sistema
 private:
 	Servidor* primero;
 	int cantidad;
 	int siguienteIdTarea;
 
-	Servidor* buscarMenosCarga(bool solohighPerformance) const;
+	Servidor* buscarMenosCarga(bool solohighPerformance) const;// Busca el servidor con menos carga, si solohighPerformance es true, solo considera servidores de alto rendimiento
 
-	ServidoresCluster(const ServidoresCluster&);
+	ServidoresCluster(const ServidoresCluster&); 
 	ServidoresCluster& operator = (const ServidoresCluster&);
 
 public:
@@ -27,7 +27,7 @@ public:
 
 	int getTotalTareasPendientes() const;
 	Servidor* buscarPorId(int id) const;
-	Servidor* buscarPorIp(const string& ip) const; //declaracion de metodo que busca sin distingir mayusculas
+	Servidor* buscarPorIp(const string& ip) const; 
 	Servidor* buscarServidorDeTarea(int idTarea) const;
 
 	//Primer Modulo 1 Servidores
@@ -38,7 +38,7 @@ public:
 	bool eliminarServidor(int id, string& mensaje);
 
 	//Segundo Modulo 2: Tareas
-	bool encolarTarea(double memoriaGB, char prioridad, const string& nombreProceso, string& mensaje);
+	bool encolarTarea(double memoriaGB, char prioridad, const string& nombreProceso, string& mensaje);//encola una tarea en el servidor con menos carga, si no hay servidores disponibles, devuelve false y un mensaje de error
 	bool ejecutarTarea(int idServidor, string& mensaje);
 	bool eliminarTarea(int idTarea, string& mensaje);
 	bool mostrarCola(int idServidor) const;
