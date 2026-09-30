@@ -5,16 +5,16 @@ using namespace std;
 
 // Constructor
 Colas::Colas() {
-    Inicio = NULL;
-    final = NULL;
+    colaInicio = NULL;
+    colaFin = NULL;
     cantidad = 0;
 }
 
 // Destructor
 Colas::~Colas() {
-    while (Inicio != NULL) {
-        Tarea* aux = Inicio;
-        Inicio = Inicio->siguiente;
+    while (colaInicio != NULL) {
+        Tarea* aux = colaInicio;
+        colaInicio = colaInicio->siguiente;
         delete aux;
     }
 }
@@ -24,13 +24,13 @@ void Colas::enColar(int id, double memoriaGB, char prioridad, const string& nomb
 
     Tarea* nuevo = new Tarea(id, memoriaGB, prioridad, nombreProceso);
 
-    if (Inicio == NULL) {
-        Inicio = nuevo;
-        final = nuevo;
+    if (colaInicio == NULL) {
+        colaInicio = nuevo;
+        colaFin = nuevo;
     }
     else {
-        final->siguiente = nuevo;
-        final = nuevo;
+        colaFin->siguiente = nuevo;
+        colaFin = nuevo;
     }
 
     cantidad++;
@@ -39,18 +39,18 @@ void Colas::enColar(int id, double memoriaGB, char prioridad, const string& nomb
 // Sacar la primera tarea
 bool Colas::desenColar(Tarea& tareaEjecutada) {
 
-    if (Inicio == NULL) {
+    if (colaInicio == NULL) {
         return false;
     }
 
-    Tarea* aux = Inicio;
+    Tarea* aux = colaInicio;
 
     tareaEjecutada = *aux;
 
-    Inicio = Inicio->siguiente;
+    colaInicio = colaInicio->siguiente;
 
-    if (Inicio == NULL) {
-        final = NULL;
+    if (colaInicio == NULL) {
+        colaFin = NULL;
     }
 
     tareaEjecutada.siguiente = NULL;
@@ -64,7 +64,7 @@ bool Colas::desenColar(Tarea& tareaEjecutada) {
 // Cancelar una tarea buscando por ID
 bool Colas::cancelar(int idTarea) {
 
-    if (Inicio == NULL) {
+    if (colaInicio == NULL) {
         return false;
     }
 
@@ -93,7 +93,7 @@ bool Colas::cancelar(int idTarea) {
 // Buscar si existe una tarea
 bool Colas::contiene(int idTarea) const {
 
-    Tarea* aux = Inicio;
+    Tarea* aux = colaInicio;
 
     while (aux != NULL) {
 
@@ -109,7 +109,7 @@ bool Colas::contiene(int idTarea) const {
 
 // Saber si la cola esta vacia
 bool Colas::estaVacia() const {
-    return Inicio == NULL;
+    return colaInicio == NULL;
 }
 
 // Mostrar las tareas
@@ -122,7 +122,7 @@ void Colas::mostrar() const {
 
     cout << "Pos | ID | Proceso | Memoria | Prioridad" << endl;
 
-    Tarea* aux = Inicio;
+    Tarea* aux = colaInicio;
     int posicion = 1;
 
     while (aux != NULL) {
