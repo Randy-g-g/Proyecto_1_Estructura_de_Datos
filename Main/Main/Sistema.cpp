@@ -15,6 +15,7 @@ using namespace std;
 void Sistema::iniciar() {
 	int opcion = -1;
 	do {
+		system("cls");
 		cout << "Gestion de Cluster de Servidores y Tareas" << endl;
 		cout << "   Servidores: " << cluster.cantidad << "/" << ServidoresCluster::idMax
 			<< "   |   Tareas pendientes: " << cluster.getTotalTareasPendientes() << "\n\n";
@@ -48,6 +49,7 @@ void Sistema::iniciar() {
 void Sistema::menuServidores() {
 	int opcion_menu = 0;
 	do {
+		system("cls");
 		cout << "\n 1. Registrar servidor";
 		cout << "\n 2. Mostrar estado del cluster";
 		cout << "\n 3. Modificar informacion de servidor";
@@ -87,6 +89,7 @@ void Sistema::menuServidores() {
 void Sistema::menuTareas() {
 	int opcion_menu = 0;
 	do {
+		system("cls");
 		cout << "\n 1. Encolar tarea (Asignar proceso)";
 		cout << "\n 2. Desencolar tarea (Ejecutar proceso)";
 		cout << "\n 3. Cancelar tarea (Eliminar por ID)";
